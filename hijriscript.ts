@@ -1,4 +1,216 @@
+export type HijriDate = {
+  year: number;
+  month: number;
+  day: number;
+  monthName: string;
+  toString: () => string;
+  toFormat: (format: string) => string;
+};
+
+export type LangFormat = {
+  notation: string;
+  monthNames: string[];
+  formatLocale: (hDate: string) => string;
+};
+
+export type Lang = {
+  [key: string]: LangFormat;
+};
+
 export class HijriScript {
+  static currentLanguage: string = "en";
+
+  static today() {
+    const today = new Date();
+    return this.gregorianToHijri(
+      today.getFullYear(),
+      today.getMonth() + 1,
+      today.getDate(),
+    );
+  }
+
+  static toGregorian(dateString: string, splitter: string = "/") {
+    // default splitter to '/
+    const arrDate = dateString.split(splitter);
+    if (arrDate.length >= 3) {
+      return this.hijriToGregorian(+arrDate[2], +arrDate[1], +arrDate[0]);
+    }
+    throw Error("Invalid Input");
+  }
+
+  static toHijri(dateString: string, splitter: string = "/"): HijriDate {
+    // default splitter to '/'
+    const arrDate = dateString.split(splitter);
+    if (arrDate.length >= 3) {
+      return this.gregorianToHijri(+arrDate[2], +arrDate[1], +arrDate[0]);
+    }
+    throw Error("Invalid Input");
+  }
+
+  static gregorianToHijri(year: number, month: number, day: number): HijriDate {
+    //This code the modified version of R.H. van Gent code, it can be found at https://webspace.science.uu.nl/~gent0113/islam/ummalqura
+    // read calendar data
+
+    let m = month - 1 + 1;
+    let y = year;
+
+    // append January and February to the previous year (i.e. regard March as
+    // the first month of the year in order to simplify leapday corrections)
+
+    if (m < 3) {
+      y -= 1;
+      m += 12;
+    }
+
+    // determine offset between Julian and Gregorian calendar
+
+    let a = Math.floor(y / 100.);
+    let jgc = a - Math.floor(a / 4.) - 2;
+
+    // compute Chronological Julian Day Number (CJDN)
+
+    const cjdn = Math.floor(365.25 * (y + 4716)) +
+      Math.floor(30.6001 * (m + 1)) + day - jgc - 1524;
+
+    a = Math.floor((cjdn - 1867216.25) / 36524.25);
+    jgc = a - Math.floor(a / 4.) + 1;
+    const b = cjdn + jgc + 1524;
+    let c = Math.floor((b - 122.1) / 365.25);
+    const d = Math.floor(365.25 * c);
+    month = Math.floor((b - d) / 30.6001);
+    day = (b - d) - Math.floor(30.6001 * month);
+
+    if (month > 13) {
+      c += 1;
+      month -= 12;
+    }
+
+    month -= 1;
+    year = c - 4716;
+
+    // compute Modified Chronological Julian Day Number (MCJDN)
+
+    const mcjdn = cjdn - 2400000;
+
+    // the MCJDN's of the start of the lunations in the Umm al-Qura calendar are stored in 'islamcalendar_dat.js'
+
+    let i = 0;
+    while (
+      i < HijriScript.ummalqura_dat.length &&
+      HijriScript.ummalqura_dat[i] <= mcjdn
+    ) i++;
+
+    // compute and output the Umm al-Qura calendar date
+
+    const iln = i + 16260;
+    const ii = Math.floor((iln - 1) / 12);
+    const iy = ii + 1;
+    const im = iln - 12 * ii;
+    const id = mcjdn - HijriScript.ummalqura_dat[i - 1] + 1;
+    return this.createHijriDate(iy, im, id);
+  }
+
+  static hijriToGregorian(year: number, month: number, day: number): Date {
+    if (isNaN(year) || isNaN(month) || isNaN(day)) {
+      throw Error("Invalid Input");
+    }
+
+    const iy = year;
+    const im = month;
+    const id = day;
+    const ii = iy - 1;
+    const iln = (ii * 12) + im;
+    const i = iln - 16260;
+    const mcjdn = id + this.ummalqura_dat[i - 1] - 1;
+    const cjdn = mcjdn + 2400000;
+    return this.julianToGregorian(cjdn);
+  }
+
+  static createHijriDate(year: number, month: number, day: number): HijriDate {
+    return {
+      year,
+      month,
+      day,
+      monthName: this.lang[this.currentLanguage].monthNames[month - 1],
+      toString: () =>
+        HijriScript.formatHijriDate(year, month, day, "dd/mm/YYYYN"),
+      toFormat: (format: string) =>
+        HijriScript.formatHijriDate(year, month, day, format),
+    };
+  }
+
+  static formatHijriDate(
+    year: number,
+    month: number,
+    day: number,
+    format: string,
+  ): string {
+    if (!this.validateHijri(year, month, day)) {
+      throw Error("Invalid Hijri date");
+    }
+    return format
+      .replace(/YYYY/g, year.toString())
+      .replace(/YY/g, year.toString().slice(-2))
+      .replace(/mm/g, month.toString().padStart(2, "0"))
+      .replace(/m/g, month.toString())
+      .replace(/dd/g, day.toString().padStart(2, "0"))
+      .replace(/d/g, day.toString())
+      .replace(/N/g, this.lang[this.currentLanguage].notation);
+  }
+
+  static julianToGregorian(julianDate: number): Date {
+    //source from: http://keith-wood.name/calendars.html
+    const z = Math.floor(julianDate + 0.5);
+    let a = Math.floor((z - 1867216.25) / 36524.25);
+    a = z + 1 + a - Math.floor(a / 4);
+    const b = a + 1524;
+    const c = Math.floor((b - 122.1) / 365.25);
+    const d = Math.floor(365.25 * c);
+    const e = Math.floor((b - d) / 30.6001);
+    const day = b - d - Math.floor(e * 30.6001);
+    const month = e - (e > 13.5 ? 13 : 1);
+    let year = c - (month > 2.5 ? 4716 : 4715);
+    if (year <= 0) {
+      year--;
+    } // No year zero
+    return new Date(year, month - 1, day);
+  }
+  static validateHijri(_year: number, month: number, day: number): boolean {
+    return month >= 1 && month <= 12 && day >= 1 && day <= 30;
+  }
+
+  static validateGregorian(_year: number, month: number, day: number): boolean {
+    if (month < 1 || month > 12) {
+      return false;
+    }
+
+    if (day < 1 || day > 31) {
+      return false;
+    }
+    return true;
+  }
+
+  static lang: Lang = {
+    en: {
+      notation: "H",
+      monthNames: [
+        "Muharram",
+        "Safar",
+        "Rabi' al-awwal",
+        "Rabi' al-thani",
+        "Jumada al-awwal",
+        "Jumada al-thani",
+        "Rajab",
+        "Sha'aban",
+        "Ramadan",
+        "Shawwal",
+        "Dhu al-Qi'dah",
+        "Dhu al-Hijjah",
+      ],
+      formatLocale: (hDate: string) => hDate,
+    },
+  };
+
   //This code the modified version of R.H. van Gent code, it can be found at https://webspace.science.uu.nl/~gent0113/islam/ummalqura
   static ummalqura_dat: number[] = [
     28607,
