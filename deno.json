@@ -1,6 +1,28 @@
 {
+  "name": "@denzsakura/hijriscript",
+  "version": "0.0.1",
+  "description": "A fork of 'HijriJS' rewritten in Typescript",
+  "license": "MIT",
+  "homepage": "https://github.com/denzsakura/HijriScript",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/denzsakura/HijriScript.git"
+  },
+  "contributors": [
+    "Suhail Alkowaileet",
+    "Denden Triana"
+  ],
+  "publish": {
+    "exclude": [
+      "main.ts",
+      "*_test.ts",
+      "*.js"
+    ]
+  },
+  "exports": "./hijriscript.ts",
   "tasks": {
-    "dev": "deno run --watch main.ts"
+    "dev": "deno run --watch main.ts",
+    "test": "deno test"
   },
   "imports": {
     "@std/assert": "jsr:@std/assert@1"
