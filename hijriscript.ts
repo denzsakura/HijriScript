@@ -20,7 +20,7 @@ export type Lang = {
 export class HijriScript {
   static currentLanguage: string = "en";
 
-  static today() {
+  static today(): HijriDate {
     const today = new Date();
     return this.gregorianToHijri(
       today.getFullYear(),
@@ -29,7 +29,7 @@ export class HijriScript {
     );
   }
 
-  static toGregorian(dateString: string, splitter: string = "/") {
+  static toGregorian(dateString: string, splitter: string = "/"): Date {
     // default splitter to '/
     const arrDate = dateString.split(splitter);
     if (arrDate.length >= 3) {
