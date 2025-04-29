@@ -96,8 +96,8 @@ export class HijriScript {
 
     let i = 0;
     while (
-      i < HijriScript.ummalqura_dat.length &&
-      HijriScript.ummalqura_dat[i] <= mcjdn
+      i < this.ummalqura_dat.length &&
+      this.ummalqura_dat[i] <= mcjdn
     ) i++;
 
     // compute and output the Umm al-Qura calendar date
@@ -106,7 +106,7 @@ export class HijriScript {
     const ii = Math.floor((iln - 1) / 12);
     const iy = ii + 1;
     const im = iln - 12 * ii;
-    const id = mcjdn - HijriScript.ummalqura_dat[i - 1] + 1;
+    const id = mcjdn - this.ummalqura_dat[i - 1] + 1;
     return this.createHijriDate(iy, im, id);
   }
 
@@ -132,10 +132,9 @@ export class HijriScript {
       month,
       day,
       monthName: this.lang[this.currentLanguage].monthNames[month - 1],
-      toString: () =>
-        HijriScript.formatHijriDate(year, month, day, "dd/mm/YYYYN"),
+      toString: () => this.formatHijriDate(year, month, day, "dd/mm/YYYYN"),
       toFormat: (format: string) =>
-        HijriScript.formatHijriDate(year, month, day, format),
+        this.formatHijriDate(year, month, day, format),
     };
   }
 
