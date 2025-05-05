@@ -208,6 +208,24 @@ export class HijriScript {
       ],
       formatLocale: (hDate: string) => hDate,
     },
+    id: {
+      notation: "H",
+      monthNames: [
+        "Muharam",
+        "Safar",
+        "Rabiulawal",
+        "Rabiulakhir",
+        "Jumadilawal",
+        "Jumadilakhir",
+        "Rajab",
+        "Syaban",
+        "Ramadan",
+        "Syawwal",
+        "Dzulqaidah",
+        "Dzulhijjah",
+      ],
+      formatLocale: (hDate: string) => hDate,
+    },
   };
 
   //This code the modified version of R.H. van Gent code, it can be found at https://webspace.science.uu.nl/~gent0113/islam/ummalqura
