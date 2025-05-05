@@ -1,10 +1,24 @@
 {
-  "version": "4",
+  "version": "5",
   "specifiers": {
+    "jsr:@cross/runtime@1": "1.1.0",
+    "jsr:@cross/test@^0.0.10": "0.0.10",
     "jsr:@std/assert@1": "1.0.13",
-    "jsr:@std/internal@^1.0.6": "1.0.6"
+    "jsr:@std/internal@^1.0.6": "1.0.6",
+    "npm:@jsr/cross__test@*": "0.0.10",
+    "npm:@jsr/std__assert@*": "1.0.13",
+    "npm:@types/node@*": "22.12.0"
   },
   "jsr": {
+    "@cross/runtime@1.1.0": {
+      "integrity": "f35a3b768a9de125277329483b684062ffc9ee86f4449cb8b3d614adcad64ffb"
+    },
+    "@cross/test@0.0.10": {
+      "integrity": "5f235cdd927d5551d692bc413458625552d299bc5471baf18180e4287cf4ac20",
+      "dependencies": [
+        "jsr:@cross/runtime"
+      ]
+    },
     "@std/assert@1.0.13": {
       "integrity": "ae0d31e41919b12c656c742b22522c32fb26ed0cba32975cb0de2a273cb68b29",
       "dependencies": [
@@ -15,9 +29,49 @@
       "integrity": "9533b128f230f73bd209408bb07a4b12f8d4255ab2a4d22a1fd6d87304aca9a4"
     }
   },
+  "npm": {
+    "@jsr/cross__runtime@1.1.0": {
+      "integrity": "sha512-GGvdy7fGJP4owjp6uQDFbfawuQJrwNJzb2gfotW9wfxtXDfyL5ukPXnHWQwsMF0rUpb5luhuG5r9/h8teYH7lw==",
+      "tarball": "https://npm.jsr.io/~/11/@jsr/cross__runtime/1.1.0.tgz"
+    },
+    "@jsr/cross__test@0.0.10": {
+      "integrity": "sha512-FjyJN1OxI6lPZGOYK3/iGuDzljPYUZN2Cm2eHaAHIvGPEYYBYLH4VI5ww0LDjM9GdXymitPh6PLhP8dwbNJGFw==",
+      "dependencies": [
+        "@jsr/cross__runtime"
+      ],
+      "tarball": "https://npm.jsr.io/~/11/@jsr/cross__test/0.0.10.tgz"
+    },
+    "@jsr/std__assert@1.0.13": {
+      "integrity": "sha512-rZ44REoi2/p+gqu8OfkcNeaTOSiG1kD6v8gyA0YjkXsOkDsiGw9g8h7JuGC/OD7GgOVgTEY+9Cih49Y18rkrCQ==",
+      "dependencies": [
+        "@jsr/std__internal"
+      ],
+      "tarball": "https://npm.jsr.io/~/11/@jsr/std__assert/1.0.13.tgz"
+    },
+    "@jsr/std__internal@1.0.6": {
+      "integrity": "sha512-1NLtCx9XAL44nt56gzmRSCgXjIthHVzK62fTkJdq8/XsP7eN9a21AZDpc0EGJ/cgvmmOB52UGh46OuKrrY7eVg==",
+      "tarball": "https://npm.jsr.io/~/11/@jsr/std__internal/1.0.6.tgz"
+    },
+    "@types/node@22.12.0": {
+      "integrity": "sha512-Fll2FZ1riMjNmlmJOdAyY5pUbkftXslB5DgEzlIuNaiWhXd00FhWxVC/r4yV/4wBb9JfImTu+jiSvXTkJ7F/gA==",
+      "dependencies": [
+        "undici-types"
+      ]
+    },
+    "undici-types@6.20.0": {
+      "integrity": "sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg=="
+    }
+  },
   "workspace": {
     "dependencies": [
+      "jsr:@cross/test@^0.0.10",
       "jsr:@std/assert@1"
-    ]
+    ],
+    "packageJson": {
+      "dependencies": [
+        "npm:@jsr/cross__test@*",
+        "npm:@jsr/std__assert@*"
+      ]
+    }
   }
 }
