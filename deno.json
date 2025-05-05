@@ -1,6 +1,6 @@
 {
   "name": "@denzsakura/hijriscript",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A fork of 'HijriJS' rewritten in Typescript",
   "license": "MIT",
   "homepage": "https://github.com/denzsakura/HijriScript",
