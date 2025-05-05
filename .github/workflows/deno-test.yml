@@ -1,0 +1,14 @@
+name: Deno CI
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x # Uses latest deno version 2
+      - run: deno install # Installs dependencies from jsr.io
+      - run: deno test  # Runs tests
