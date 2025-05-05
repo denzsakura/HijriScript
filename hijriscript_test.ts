@@ -10,6 +10,10 @@ Deno.test("toHijri to dd-mm-YYYYN format", () => {
   const hijriDate = HijriScript.toHijri("29/04/2025");
   assert(hijriDate.toFormat("dd-mm-YYYYN") === "01-11-1446H");
 });
+Deno.test("toHijri to dd-mm-YYYYN format with arabic numeral", () => {
+  const hijriDate = HijriScript.toHijri("29/04/2025");
+  assert(hijriDate.toFormat("dd-mm-YYYYN", true) === "٠١-١١-١٤٤٦H");
+});
 
 Deno.test("toHijri to dd-mm-YYN format", () => {
   const hijriDate = HijriScript.toHijri("29/04/2025");

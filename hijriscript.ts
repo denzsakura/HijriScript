@@ -4,7 +4,7 @@ export type HijriDate = {
   day: number;
   monthName: string;
   toString: () => string;
-  toFormat: (format: string) => string;
+  toFormat: (format: string, withArabicNumeral?: boolean) => string;
 };
 
 export type LangFormat = {
@@ -133,8 +133,8 @@ export class HijriScript {
       day,
       monthName: this.lang[this.currentLanguage].monthNames[month - 1],
       toString: () => this.formatHijriDate(year, month, day, "dd/mm/YYYYN"),
-      toFormat: (format: string) =>
-        this.formatHijriDate(year, month, day, format),
+      toFormat: (format: string, withArabicNumeral: boolean = false) =>
+        this.formatHijriDate(year, month, day, format, withArabicNumeral),
     };
   }
 
@@ -143,17 +143,47 @@ export class HijriScript {
     month: number,
     day: number,
     format: string,
+    withArabicNumeral: boolean = false,
   ): string {
     if (!this.validateHijri(year, month, day)) {
       throw Error("Invalid Hijri date");
     }
+
     return format
-      .replace(/YYYY/g, year.toString())
-      .replace(/YY/g, year.toString().slice(-2))
-      .replace(/mm/g, month.toString().padStart(2, "0"))
-      .replace(/m/g, month.toString())
-      .replace(/dd/g, day.toString().padStart(2, "0"))
-      .replace(/d/g, day.toString())
+      .replace(
+        /YYYY/g,
+        withArabicNumeral ? this.toArabicNumerals(year) : year.toString(),
+      )
+      .replace(
+        /YY/g,
+        withArabicNumeral
+          ? this.toArabicNumerals(year.toString().slice(-2))
+          : year.toString().slice(-2),
+      )
+      .replace(
+        /mm/g,
+        withArabicNumeral
+          ? this.toArabicNumerals(month.toString().padStart(2, "0"))
+          : month.toString().padStart(2, "0"),
+      )
+      .replace(
+        /m/g,
+        withArabicNumeral
+          ? this.toArabicNumerals(month.toString())
+          : month.toString(),
+      )
+      .replace(
+        /dd/g,
+        withArabicNumeral
+          ? this.toArabicNumerals(day.toString().padStart(2, "0"))
+          : day.toString().padStart(2, "0"),
+      )
+      .replace(
+        /d/g,
+        withArabicNumeral
+          ? this.toArabicNumerals(day.toString())
+          : day.toString(),
+      )
       .replace(/N/g, this.lang[this.currentLanguage].notation);
   }
 
@@ -239,6 +269,23 @@ export class HijriScript {
   static getLanguage(): string {
     return this.currentLanguage;
   }
+
+  static toArabicNumerals(input: number | string): string {
+    const arabicDigits = [
+      "\u0660",
+      "\u0661",
+      "\u0662",
+      "\u0663",
+      "\u0664",
+      "\u0665",
+      "\u0666",
+      "\u0667",
+      "\u0668",
+      "\u0669",
+    ];
+    return input.toString().replace(/\d/g, (d) => arabicDigits[parseInt(d)]);
+  }
+
   //This code the modified version of R.H. van Gent code, it can be found at https://webspace.science.uu.nl/~gent0113/islam/ummalqura
   static ummalqura_dat: number[] = [
     28607,
