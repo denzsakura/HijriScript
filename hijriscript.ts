@@ -236,6 +236,9 @@ export class HijriScript {
     }
   }
 
+  static getLanguage(): string {
+    return this.currentLanguage;
+  }
   //This code the modified version of R.H. van Gent code, it can be found at https://webspace.science.uu.nl/~gent0113/islam/ummalqura
   static ummalqura_dat: number[] = [
     28607,
